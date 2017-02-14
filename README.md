@@ -1,6 +1,6 @@
 # asuswrt-merlin-xtables
 
-The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and iptables **matches** (fuzzy, iface, ipv4options, lscan, pknock).
+The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and iptables **matches** (fuzzy, iface, ipv4options, lscan, pknock, psd, quota2).
 
 
 ## Targets
@@ -364,6 +364,69 @@ UDP mode cannot be used across NAT.
 
 For sending UDP "SPA" packets, you may use either `knock.sh` or
 `knock-orig.sh`. These may be found in `doc/pknock/util`.
+
+
+###PSD match
+Attempt to detect TCP and UDP port scans. This match was derived from
+Solar Designer's scanlogd.
+
+**--psd-weight-threshold threshold**  
+Total weight of the latest TCP/UDP packets with different
+destination ports coming from the same host to be treated as port
+scan sequence.
+
+**--psd-delay-threshold delay**  
+Delay (in hundredths of second) for the packets with different
+destination ports coming from the same host to be treated as
+possible port scan subsequence.
+
+**--psd-lo-ports-weight weight**  
+Weight of the packet with privileged (<=1024) destination port.
+
+**--psd-hi-ports-weight weight**  
+Weight of the packet with non-priviliged destination port.
+
+
+
+###QUOTA2 match
+The "quota2" implements a named counter which can be increased or decreased
+on a per-match basis. Available modes are packet counting or byte counting.
+The value of the counter can be read and reset through procfs, thereby making
+this match a minimalist accounting tool.
+
+When counting down from the initial quota, the counter will stop at 0 and
+the match will return false, just like the original "quota" match. In growing
+(upcounting) mode, it will always return true.
+
+**--grow**  
+Count upwards instead of downwards.
+
+**--no-change**  
+Makes it so the counter or quota amount is never changed by packets matching
+this rule. This is only really useful in "quota" mode, as it will allow you to
+use complex prerouting rules in association with the quota system, without
+counting a packet twice.
+
+**--name name**  
+Assign the counter a specific name. This option must be present, as an empty
+name is not allowed. Names starting with a dot or names containing a slash are
+prohibited.
+
+**[!] --quota iq**  
+Specify the initial quota for this counter. If the counter already exists,
+it is not reset. An "!" may be used to invert the result of the match. The
+negation has no effect when --grow is used.
+
+**--packets**  
+Count packets instead of bytes that passed the quota2 match.
+
+Because counters in quota2 can be shared, you can combine them for various
+purposes, for example, a bytebucket filter that only lets as much traffic go
+out as has come in:
+```
+-A INPUT -p tcp --dport 6881 -m quota --name bt --grow;
+-A OUTPUT -p tcp --sport 6881 -m quota --name bt;
+```
 
 
 # References
