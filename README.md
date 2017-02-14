@@ -1,6 +1,6 @@
 # asuswrt-merlin-xtables
 
-The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for Iptables targets (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and matches (FUZZY, IFACE, IPV4OPTIONS, LSCAN, PKNOCK).
+The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for Iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and **matches** (FUZZY, IFACE, IPV4OPTIONS, LSCAN, PKNOCK).
 
 
 ## Targets
@@ -125,12 +125,12 @@ Check the states on the given interface.
 
 **--dev-in**  
 Check the states on the interface on which the packet came in. If the input
-device is not set, because for example you are using -m iface in the OUTPUT
+device is not set, because for example you are using `-m iface` in the OUTPUT
 chain, this submatch returns false.
 
 **--dev-out**  
 Check the states on the interface on which the packet will go out. If the
-output device is not set, because for example you are using -m iface in the
+output device is not set, because for example you are using `-m iface` in the
 INPUT chain, this submatch returns false.
 
 Following that, one can select the interface properties to check for:
@@ -316,7 +316,7 @@ Specifying `--autoclose 0` means that no automatic close will be performed at al
 via a netlink socket to userspace, should you need to implement your own
 way of receiving and handling portknock notifications.
 Be sure to read the documentation in the `doc/pknock/` directory,
-or visit the original site, `http://portknocko.berlios.de/`.
+or visit the original site, http://portknocko.berlios.de/.
 
 **TCP mode:**  
 
