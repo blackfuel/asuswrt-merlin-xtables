@@ -1,9 +1,6 @@
 # asuswrt-merlin-xtables
 
-The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds the following capabilities for Iptables targets and matches.
-
-**Targets:**  CHAOS, DELUDE, RAWNAT, STEAL, TARPIT  
-**Matches:**  FUZZY, IFACE, IPV4OPTIONS, LSCAN, PKNOCK  
+The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for Iptables targets (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and matches (FUZZY, IFACE, IPV4OPTIONS, LSCAN, PKNOCK).
 
 
 ## Targets
@@ -26,7 +23,7 @@ may fail to do their connection tracking if they have to handle more
 connections than they can.
 
 The randomness factor of not replying vs. replying can be set during load-time
-of the xt_CHAOS module or during runtime in /sys/modules/xt_CHAOS/parameters.
+of the `xt_CHAOS` module or during runtime in `/sys/modules/xt_CHAOS/parameters`.
 
 See http://jengelh.medozas.de/projects/chaostables/ for more information
 about CHAOS, DELUDE and lscan.
@@ -249,15 +246,15 @@ ports where a protocol runs that is guaranteed to do a bidirectional exchange
 of bytes.
 
 NOTE: Some clients (Windows XP for example) may do what looks like a SYN scan,
-so be advised to carefully use xt_lscan in conjunction with blocking rules,
+so be advised to carefully use `xt_lscan` in conjunction with blocking rules,
 as it may lock out your very own internal network.
 
 
 ###PKNOCK match
 Pknock match implements so-called "port knocking", a stealthy system
 for network authentication: a client sends packets to selected
-ports in a specific sequence (= simple mode, see example 1 below), or a HMAC
-payload to a single port (= complex mode, see example 2 below),
+ports in a specific sequence (*simple mode*, see example 1 below), or a HMAC
+payload to a single port (*complex mode*, see example 2 below),
 to a target machine that has pknock rule(s) installed. The target machine
 then decides whether to unblock or block (again) the pknock-protected port(s).
 This can be used, for instance, to avoid brute force
@@ -280,7 +277,7 @@ to ports 4002, 4001 and 4004, in this order (a.k.a. port-knocking).
 Port numbers in the connect sequence must follow the exact specification, no
 other ports may be "knocked" inbetween. The rule is named 'SSH', a file of
 the same name for tracking port knocking states will be created in
-/proc/net/xt_pknock .
+`/proc/net/xt_pknock`.
 
 Successive port knocks must occur with delay of at most 10 seconds. Port 22 (from the example) will
 be automatiaclly dropped after 60 minutes after it was previously allowed.
@@ -293,7 +290,7 @@ iptables -A INPUT -p udp -m pknock --knockports 4000 --name FTP --opensecret foo
 
 iptables -A INPUT -p tcp -m pknock --checkip --name FTP --dport 21 -j ACCEPT
 ```
-The first rule will create an "ALLOWED" record in /proc/net/xt_pknock/FTP after
+The first rule will create an "ALLOWED" record in `/proc/net/xt_pknock/FTP` after
 the successful reception of an UDP packet to port 4000. The packet payload must be
 constructed as a HMAC256 using "foo" as a key. The HMAC content is the particular 
 client's IP address as a 32-bit network byteorder quantity,
@@ -304,22 +301,22 @@ address will cause such packets to be accepted in the second rule.
 
 Similarly, upon reception of an UDP packet constructed the same way, but with
 the key "bar", the first rule will remove a previously installed "ALLOWED" state
-record from /proc/net/xt_pknock/FTP, which means that the second rule will
+record from `/proc/net/xt_pknock/FTP`, which means that the second rule will
 stop matching for subsequent connection attempts to port 21.
 In case no close-secret packet is received within 4 hours, the first rule
-will remove "ALLOWED" record from /proc/net/xt_pknock/FTP itself.
+will remove "ALLOWED" record from `/proc/net/xt_pknock/FTP` itself.
 
 Things worth noting:
 
 **General:**  
 
-Specifying --autoclose 0 means that no automatic close will be performed at all.
+Specifying `--autoclose 0` means that no automatic close will be performed at all.
 
-xt_pknock is capable of sending information about successful matches
+`xt_pknock` is capable of sending information about successful matches
 via a netlink socket to userspace, should you need to implement your own
 way of receiving and handling portknock notifications.
-Be sure to read the documentation in the doc/pknock/ directory,
-or visit the original site, http://portknocko.berlios.de/ .
+Be sure to read the documentation in the `doc/pknock/` directory,
+or visit the original site, `http://portknocko.berlios.de/`.
 
 **TCP mode:**  
 
@@ -334,16 +331,16 @@ increasing or decreasing with a small stepsize (e.g. 1024,1025,1026)
 to avoid accidentally triggering
 the rule by a portscan.
 
-Specifying the inter-knock timeout with --time is mandatory in TCP mode,
+Specifying the inter-knock timeout with `--time` is mandatory in TCP mode,
 to avoid permanent denial of services by clogging up the peer knock-state tracking table
-that xt_pknock internally keeps, should there be a DDoS on the
+that `xt_pknock` internally keeps, should there be a DDoS on the
 first-in-row knock port from more hostile IP addresses than what the actual size
 of this table is (defaults to 16, can be changed via the "peer_hasht_ents" module parameter).
-It is also wise to use as short a time as possible (1 second) for --time
+It is also wise to use as short a time as possible (1 second) for `--time`
 for this very reason. You may also consider increasing the size
-of the peer knock-state tracking table. Using --strict also helps,
+of the peer knock-state tracking table. Using `--strict` also helps,
 as it requires the knock sequence to be exact. This means that if the
-hostile client sends more knocks to the same port, xt_pknock will
+hostile client sends more knocks to the same port, `xt_pknock` will
 mark such attempt as failed knock sequence and will forget it immediately.
 To completely thwart this kind of DDoS, knock-ports would need to have
 an additional rate-limit protection. Or you may consider using UDP mode.
@@ -357,7 +354,7 @@ For this mode to work, the clock difference on the client and on the server
 must be below 1 minute. Synchronizing time on both ends by means
 of NTP or rdate is strongly suggested.
 
-There is a rate limiter built into xt_pknock which blocks any subsequent
+There is a rate limiter built into `xt_pknock` which blocks any subsequent
 open attempt in UDP mode should the request arrive within less than one
 minute since the first successful open. This is intentional;
 it thwarts eventual spoofing attacks.
@@ -365,8 +362,8 @@ it thwarts eventual spoofing attacks.
 Because the payload value of an UDP knock packet is influenced by client's IP address,
 UDP mode cannot be used across NAT.
 
-For sending UDP "SPA" packets, you may use either knock.sh or
-knock-orig.sh. These may be found in doc/pknock/util.
+For sending UDP "SPA" packets, you may use either `knock.sh` or
+`knock-orig.sh`. These may be found in `doc/pknock/util`.
 
 
 # References
