@@ -1,6 +1,6 @@
 # asuswrt-merlin-xtables
 
-The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for Iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and **matches** (FUZZY, IFACE, IPV4OPTIONS, LSCAN, PKNOCK).
+The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for Iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and **matches** (fuzzy, iface, ipv4options, lscan, pknock).
 
 
 ## Targets
