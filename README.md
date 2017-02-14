@@ -1,6 +1,8 @@
 # asuswrt-merlin-xtables
 
-The files in this repo are compiled into the Asuswrt-Merlin firmware.  This adds new capabilities for iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and iptables **matches** (fuzzy, iface, ipv4options, lscan, pknock, psd, quota2).
+The files in this repo have been copied directly from the Xtables-addons-1.47.1 source code distribution, and organized into the appropriate Asuswrt-Merlin folder structure, for the purpose of compiling the modules directly into the firmware.  They are kept in a `.tar.gz` archive to preserve the original file timestamps.  All Xtables-addons source files are original and unmodified.
+
+This repo adds new capabilities to Asuswrt-Merlin for iptables **targets** (CHAOS, DELUDE, RAWNAT, STEAL, TARPIT) and iptables **matches** (fuzzy, iface, ipv4options, lscan, pknock, psd, quota2).  To test this functionality on your Asus router, flash the Blackfuel version of Asuswrt-Merlin.
 
 
 ## Targets
